@@ -1,8 +1,11 @@
+const Admin = require('../models/Admin');
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const secret = process.env.ADMIN_JWT_SECRET;
 const jwt = require('jsonwebtoken');
-const secret = process.env.JWT_SECRET;
-const Notas = require('../models/Notas');
+const bcrypt = require('bcryptjs');
+
+
+
 
 const generate_token = (id) => {
     return jwt.sign({ id }, secret, {
@@ -36,11 +39,13 @@ const register_user = async(req, res) => {
 
     const salt = await bcrypt.genSalt();
     const pass_hash = await bcrypt.hash(password, salt);
+
     const new_user = await User.create({
         name,
         email,
         password: pass_hash, 
     });
+
     if(!new_user) {
         return res.status(400).json({ message: 'Erro ao cadastrar usuário' });
     }
@@ -48,58 +53,62 @@ const register_user = async(req, res) => {
     res.status(201).json({ message: 'Usuário cadastrado com sucesso' });
 };
 
-const login_user = async(req, res) => {
+const register_admin = async(req, res) => {
+    const { name, email, password } = req.body;
+    if(!name || !email || !password) {
+        return res.status(400).json({ message: 'Preencha todos os campos' });
+    }
+    if(await Admin.findOne({ email })) {
+        return res.status(400).json({ message: 'Email já cadastrado' });
+    }
+
+    const salt = await bcrypt.genSalt();
+    const pass_hash = await bcrypt.hash(password, salt);
+
+    const new_admin = await Admin.create({
+        name,
+        email,
+        password: pass_hash, 
+    });
+
+    if(!new_admin) {
+        return res.status(400).json({ message: 'Erro ao cadastrar admin' });
+    }
+
+    res.status(201).json({ message: 'Admin cadastrado com sucesso' });
+};
+
+const login_admin = async(req, res) => {
     const { email, password } = req.body;
     if(!email || !password) {
         return res.status(400).json({ message: 'Preencha todos os campos' });
     }
     
-    const user = await User.findOne({ email });
-    if(!user) {
+    const admin = await Admin.findOne({ email });
+
+    if(!admin) {
         return res.status(400).json({ message: 'Email não cadastrado' });
     }
 
-    const pass_match = await bcrypt.compare(password, user.password);
+    const pass_match = await bcrypt.compare(password, admin.password);
     if(!pass_match) {
         return res.status(400).json({ message: 'Senha incorreta' });
     }
 
     res.status(200).json({
         message: 'Login efetuado com sucesso.',
-        user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
+        admin: {
+            id: admin._id,
+            name: admin.name,
+            email: admin.email,
         },
-        token: generate_token(user._id),
+        token: generate_token(admin._id),
     })
-};
-
-const create_nota = async(req, res) => {
-    const { dataEntrada, fornecedor, valor, parcelas, dataVencimento, centroCusto } = req.body;
-    if(!dataEntrada || !fornecedor || !valor || !parcelas || !dataVencimento || !centroCusto) {
-        return res.status(400).json({ message: 'Preencha todos os campos' });
-    }
-
-    const new_nota = await Notas.create({
-        dataEntrada,
-        fornecedor,
-        valor,
-        parcelas,
-        dataVencimento,
-        centroCusto,
-    });
-
-    if(!new_nota) {
-        return res.status(400).json({ message: 'Erro ao cadastrar nota' });
-    }
-
-    res.status(201).json({ message: 'Nota cadastrada com sucesso' });
-};
+}
 
 module.exports = {
     register_user,
-    login_user,
+    register_admin,
+    login_admin,
     verify_token,
-    create_nota
 }

@@ -6,6 +6,8 @@ router.get('/', (req, res) => {
 });
 
 router.use("/users", require("./UserRoutes"));
+router.use("/notas", require("./NotasRoutes"));
+router.use("/admin", require("./AdminRoutes"));
 
 
 module.exports = router;

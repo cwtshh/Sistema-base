@@ -4,20 +4,18 @@ const Schema = mongoose.Schema;
 
 const NotasSchema = new Schema(
     {
-        data: String,
+        dataEntrada: String,
         fornecedor: String,
         valor: Number,
         parcelas: Number,
-        vencimento: String,
-        centro_custo: String,
-        mercadorias: Array,
+        dataVencimento: String,
+        centroCusto: String,
     },
     {
-        timestamps: true
-    },
-    {
-        collection: 'notas',
+        timestamps: true,
     }
 );
 
 const Notas = mongoose.model('Notas', NotasSchema);
+
+module.exports = Notas;
