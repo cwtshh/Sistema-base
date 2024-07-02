@@ -43,6 +43,7 @@ export const AdminAuthProvider = ({ children }) => {
             localStorage.setItem("auth@admin_token", res.data.token);
             setAdmin(res.data.admin);
             setToken(res.data.token);
+            
         }).catch(error => {
             console.error(error);
         });

@@ -3,17 +3,18 @@ import UserDashBoardNavBar from '../../components/navbar/UserDashBoardNavBar'
 import axios from 'axios'
 import { API_BASE_URL } from '../../util/constants';
 import ExcelJS from 'exceljs';
+import { useNavigate } from 'react-router-dom';
 
 
 const NotasHistory = () => {
   const [notas, setNotas] = useState([]);
-
   const [ dataEntradaFilter, setDataEntradaFilter ] = useState('')
   const [ fornecedorFilter, setFornecedorFilter ] = useState('')
   const [ valorFilter, setValorFilter ] = useState('');
   const [ parcelasFilter, setParcelasFilter ] = useState('')
   const [ dataVencimentoFilter, setDataVencimentoFilter ] = useState('')
   const [ centroCustoFilter, setCentroCustoFilter ] = useState('')
+  const navigate = useNavigate();
 
   const apply_filters = () => {
     return notas.filter(nota => {
@@ -79,6 +80,7 @@ const NotasHistory = () => {
       <UserDashBoardNavBar />
 
       <div className='p-6'>
+        <button onClick={() => navigate("/user/dashboard")} className='btn btn-neutral'>Voltar</button>
         <h1>Historico de Notas</h1>
         <br />
 

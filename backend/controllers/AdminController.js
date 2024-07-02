@@ -13,6 +13,19 @@ const generate_token = (id) => {
     });
 };
 
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if(!token) return res.status(401).json({ message: 'Token não fornecido' });
+
+    jwt.verify(token, secret, (err, user) => {
+        if(err) return res.status(403).json({ message: 'Token inválido' });
+        req.user = user;
+        next();
+    })
+}
+
 const verify_token = async(req, res) => {
     const { token } = req.body;
     const verify = jwt.verify(token, secret, (err, decoded) => {
@@ -111,4 +124,5 @@ module.exports = {
     register_admin,
     login_admin,
     verify_token,
+    authenticateToken
 }

@@ -3,6 +3,9 @@ import AdminDashBoardNavBar from '../../../components/navbar/AdminDashBoardNavBa
 import { useAdminAuth } from '../../../context/AdminAuthContext'
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../../context/UserAuthContext';
+import axios from 'axios';
+import { API_BASE_URL } from '../../../util/constants';
+import axiosInstance from '../../../axios/Axiosinstance';
 
 const AdminDashBoard = () => {
 
@@ -21,13 +24,34 @@ const AdminDashBoard = () => {
       return;
     }
 
-    if(user_type === 'admin') (
-      await register_admin(name, email, password)
-    )
+    if(user_type === 'admin') {
+      alert("ADMIN");
+      return;
+    }
 
-    if(user_type === 'user') (
-      await register_user(name, email, password)
-    )
+    if(user_type === 'user') {
+      // const res = await axios.post(`${API_BASE_URL}/admin/register/user`, {
+      //   name: name,
+      //   email: email,
+      //   password: password,
+      // }).then(res => {
+      //   console.log(res.data);    
+      // }).catch(error => {
+      //   console.error(error);
+      // });
+      const res = await axiosInstance.post('/admin/register/user', {
+        name: name,
+        email: email,
+        password: password,
+      }).then(res => {
+        console.log(res.data);
+
+      }).catch(error => {
+        console.error(error);
+      });
+      return;
+    }
+
 
   }
 
