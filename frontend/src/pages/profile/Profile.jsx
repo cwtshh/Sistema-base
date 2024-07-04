@@ -3,9 +3,10 @@ import UserDashBoardNavBar from '../../components/navbar/UserDashBoardNavBar'
 import { useUserAuth } from '../../context/UserAuthContext'
 import Alert from '../../components/alert/Alert';
 import axiosInstance from '../../axios/Axiosinstance';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
-  const { user } = useUserAuth();
+  const { user, login } = useUserAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
@@ -15,6 +16,7 @@ const Profile = () => {
 
   const [ error, setError ] = useState(false);
 
+  const navigate = useNavigate();
 
   const verify_password = () => {
     console.log(newPassword, confirmPassword)
@@ -41,7 +43,52 @@ const Profile = () => {
       console.log(err);
       setError(true);
     })
-  }
+  };
+
+  const handleUserDataChange = async(e) => {
+    e.preventDefault();
+    const old_email = user.email;
+    await axiosInstance.post('/users/edit/name-email', {
+      new_name: name,
+      new_email: email,
+      old_email: old_email,
+    }).then(res => {
+      if(email === "" && name === "") {
+        alert("Preencha ao menos um campo");
+        return;
+      }
+      if(email !== "" && name === "") {
+        const new_data = {
+          id: user.id,
+          name: user.name,
+          email: email,
+        }
+        localStorage.setItem("auth@user", JSON.stringify(new_data));
+        user.email = email;
+        console.log(user.email);
+        return;
+      }
+      if(email === "" && name !== "") {
+        const new_data = {
+          id: user.id,
+          name: name,
+          email: user.email,
+        };
+        localStorage.setItem("auth@user", JSON.stringify(new_data));
+        console.log(user.email);
+        return;
+      };
+      const new_data = {
+        id: user.id,
+        name: name,
+        email: email,
+      };
+      localStorage.setItem("auth@user", JSON.stringify(new_data));
+      console.log(user.email);
+    });
+  };
+
+
 
   useEffect(() => {
     verify_password();
@@ -70,14 +117,14 @@ const Profile = () => {
 
           <div>
             <h1>Informações Pessoais</h1>
-            <form className='mt-6'>
+            <form onSubmit={handleUserDataChange} className='mt-6'>
               <label className="form-control w-full max-w-xs">
                 <div className="label">
                   <span className="label-text">Nome:</span>
                 </div>
                 <input 
                   type="text" 
-                  value={user.name} 
+                  placeholder={user.name}
                   className="input input-bordered w-full max-w-xs" 
                   onChange={e => setName(e.target.value)}  
                 />
@@ -89,7 +136,7 @@ const Profile = () => {
                 </div>
                 <input 
                   type="text" 
-                  value={user.email} 
+                  placeholder={user.email} 
                   className="input input-bordered w-full max-w-xs" 
                   onChange={e => setEmail(e.target.value)}
                 />

@@ -191,6 +191,32 @@ const edit_passowrd = async(req, res) => {
     res.status(200).json({ message: 'Senha alterada com sucesso' });
 }
 
+const edit_email_name = async(req, res) => {
+    const { new_name, new_email, old_email } = req.body;
+    // console.log(new_name, new_email, old_email);
+    const user = await User.findOne({ email: old_email });
+    if(!user) {
+        return res.status(400).json({ message: 'Email não cadastrado' });
+    }
+    if(!new_name && !new_email) {
+        return res.status(400).json({ message: 'Preencha ao menos um campo' });
+    }
+    if(new_name === "") {
+        user.email = new_email;
+        await user.save();
+        return res.status(200).json({ message: 'Email alterado com sucesso' });
+    }
+    if(new_email === "") {
+        user.name = new_name;
+        await user.save();
+        return res.status(200).json({ message: 'Nome alterado com sucesso' });
+    }
+    user.name = new_name;
+    user.email = new_email;
+    await user.save();
+    res.status(200).json({ message: 'Nome e email alterados com sucesso' });
+}
+
 module.exports = {
     register_user,
     login_user,
@@ -199,5 +225,6 @@ module.exports = {
     authenticateToken,
     create_mercadoria,
     create_saida,
-    edit_passowrd
+    edit_passowrd,
+    edit_email_name
 }

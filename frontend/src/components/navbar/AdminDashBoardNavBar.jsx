@@ -6,9 +6,9 @@ const AdminDashBoardNavBar = () => {
     const { logout } = useAdminAuth();
     const navigate = useNavigate();
 
-    const handleLogout = async(e) => {
+    const handleLogout = (e) => {
         e.preventDefault();
-        await logout();
+        logout();
     }
     return (
         <div className="navbar bg-base-100">
