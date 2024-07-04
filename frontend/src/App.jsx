@@ -11,6 +11,7 @@ import AdminDashBoard from './pages/dashboard/admin-dashboard/AdminDashBoard'
 import ProtectedRouteAdmim from './routes/ProtectedRouteAdmin'
 import Footer from './components/footer/Footer'
 import Estoque from './pages/estoque/Estoque'
+import Profile from './pages/profile/Profile'
 
 function App() {
   // const { user } = useUserAuth();
@@ -31,6 +32,7 @@ function App() {
             <Route path="/user/notas/historico" element={<ProtectedRoute element={NotasHistory} />} />
             <Route path="/admin/dashboard" element={<ProtectedRouteAdmim element={AdminDashBoard} />} />
             <Route path="/user/estoque" element={<ProtectedRoute element={Estoque} />} />
+            <Route path='/user/profile' element={<ProtectedRoute element={Profile} />} />
             {/* <Route path='/user/dashboard' element={ user ? (<UserDashBoard />) : (<Navigate to='/login' />)} /> */}
           </Routes>
         </BrowserRouter>

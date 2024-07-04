@@ -165,6 +165,32 @@ const create_saida = async(req, res) => {
     res.status(201).json({ message: 'Saída cadastrada com sucesso' });
 };
 
+const edit_passowrd = async(req, res) => {
+    console.log("CHEGOU")
+    const { email, password, new_password } = req.body;
+    if(!password || !new_password) {
+        return res.status(400).json({ message: 'Preencha todos os campos' });
+    }
+
+    const user = await User.findOne({ email });
+    if(!user) {
+        return res.status(400).json({ message: 'Email não cadastrado' });
+    }
+
+    const pass_match = await bcrypt.compare(password, user.password);
+    if(!pass_match) {
+        return res.status(400).json({ message: 'Senha incorreta' });
+    }
+
+    const salt = await bcrypt.genSalt();
+    const pass_hash = await bcrypt.hash(new_password, salt);
+
+    user.password = pass_hash;
+    await user.save();
+
+    res.status(200).json({ message: 'Senha alterada com sucesso' });
+}
+
 module.exports = {
     register_user,
     login_user,
@@ -172,5 +198,6 @@ module.exports = {
     create_nota,
     authenticateToken,
     create_mercadoria,
-    create_saida
+    create_saida,
+    edit_passowrd
 }

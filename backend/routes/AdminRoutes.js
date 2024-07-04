@@ -11,6 +11,7 @@ router.post('/register', authenticateToken, register_admin);
 router.post('/register/user', authenticateToken, register_user);
 router.post('/verify_token', verify_token);
 router.post('/login', login_admin);
+router.post('/register/temp', register_admin); // rota temporaria para cadastro de admin
 
 
 
